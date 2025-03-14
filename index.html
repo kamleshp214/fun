@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGPV Result Portal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Rajiv Gandhi Proudyogiki Vishwavidyalaya, Bhopal</h2>
+        <h3>Statement of Marks - DEC-2024</h3>
+
+        <div class="input-section">
+            <label for="enrollment">Enrollment No.:</label>
+            <input type="text" id="enrollment" placeholder="Enter Enrollment No.">
+            
+            <label>Captcha:</label>
+            <div class="captcha-box">
+                <span id="captcha-text"></span>
+                <input type="text" id="captcha-input" placeholder="Enter CAPTCHA">
+            </div>
+
+            <button id="view-result">View Result</button>
+        </div>
+
+        <section id="result-display" class="result-section"></section>
+    </div>
+
+    <script>
+        const resultsDatabase = {
+            "0704CS221092": {
+                name: "KAMLESH PORWAL",
+                rollNo: "0704CS221092",
+                course: "B.Tech",
+                branch: "CS",
+                semester: "5",
+                status: "Regular",
+                subjects: [
+                    { code: "CS501-[T]", totalCredit: 3, earnedCredit: 3, grade: "C" },
+                    { code: "CS502-[T]", totalCredit: 3, earnedCredit: 3, grade: "A" },
+                    { code: "CS503-[T]", totalCredit: 4, earnedCredit: 4, grade: "B+" },
+                    { code: "CS504-[T]", totalCredit: 3, earnedCredit: 3, grade: "B+" },
+                    { code: "BT407-[P]", totalCredit: 3, earnedCredit: 3, grade: "A" },
+                    { code: "CS501-[P]", totalCredit: 1, earnedCredit: 1, grade: "B+" },
+                    { code: "CS502-[P]", totalCredit: 1, earnedCredit: 1, grade: "B" },
+                    { code: "CS505-[P]", totalCredit: 2, earnedCredit: 2, grade: "A" },
+                    { code: "CS506-[P]", totalCredit: 2, earnedCredit: 2, grade: "A+" },
+                    { code: "CS508-[P]", totalCredit: 2, earnedCredit: 2, grade: "A" }
+                ],
+                sgpa: "7.51",
+                cgpa: "7.54",
+                resultDes: "PASS",
+                revalDate: "16/03/2025",
+                lateRevalDate: "19/03/2025"
+            }
+        };
+
+        document.getElementById("view-result").addEventListener("click", function () {
+            let enrollment = document.getElementById("enrollment").value.trim();
+            let captchaInput = document.getElementById("captcha-input").value.trim();
+            let captchaText = document.getElementById("captcha-text").textContent;
+            let resultDiv = document.getElementById("result-display");
+
+            if (enrollment === "") {
+                alert("Please enter Enrollment No.");
+                return;
+            }
+
+            if (captchaInput !== captchaText) {
+                alert("Invalid CAPTCHA!");
+                return;
+            }
+
+            if (resultsDatabase[enrollment]) {
+                let result = resultsDatabase[enrollment];
+
+                let resultHTML = `
+                    <table border="1">
+                        <tr>
+                            <td><strong>Name:</strong></td><td>${result.name}</td>
+                            <td><strong>Roll No.:</strong></td><td>${result.rollNo}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Course:</strong></td><td>${result.course}</td>
+                            <td><strong>Branch:</strong></td><td>${result.branch}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Semester:</strong></td><td>${result.semester}</td>
+                            <td><strong>Status:</strong></td><td>${result.status}</td>
+                        </tr>
+                    </table>
+
+                    <br>
+                    <table border="1">
+                        <tr>
+                            <th>Subject</th>
+                            <th>Total Credit</th>
+                            <th>Earned Credit</th>
+                            <th>Grade</th>
+                        </tr>`;
+
+                result.subjects.forEach(sub => {
+                    resultHTML += `
+                        <tr>
+                            <td>${sub.code}</td>
+                            <td>${sub.totalCredit}</td>
+                            <td>${sub.earnedCredit}</td>
+                            <td>${sub.grade}</td>
+                        </tr>`;
+                });
+
+                resultHTML += `</table>
+                    <br>
+                    <table border="1">
+                        <tr>
+                            <td><strong>Result Des.:</strong></td><td>${result.resultDes}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SGPA:</strong></td><td>${result.sgpa}</td>
+                            <td><strong>CGPA:</strong></td><td>${result.cgpa}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Revaluation Date:</strong></td><td>${result.revalDate}</td>
+                            <td><strong>Revaluation Date with Late Fee:</strong></td><td>${result.lateRevalDate}</td>
+                        </tr>
+                    </table>
+
+                    <br>
+                    <p><strong>Data Source:</strong> Rajiv Gandhi Proudyogiki Vishwavidyalaya, Bhopal</p>
+                    <p class="disclaimer">Disclaimer: The data belongs to RGPV. For any communication related to the published data, please contact the examination cell of RGPV or respective College.</p>
+                `;
+
+                resultDiv.innerHTML = resultHTML;
+                resultDiv.style.display = "block";
+            } else {
+                resultDiv.innerHTML = "<p>No result found for this Enrollment No.</p>";
+                resultDiv.style.display = "block";
+            }
+        });
+
+        function generateCaptcha() {
+            let captchaText = Math.random().toString(36).substring(2, 7).toUpperCase();
+            document.getElementById("captcha-text").textContent = captchaText;
+        }
+
+        window.onload = generateCaptcha;
+    </script>
+</body>
+</html>
